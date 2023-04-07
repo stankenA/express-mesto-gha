@@ -1,4 +1,3 @@
-const user = require('../models/user');
 const User = require('../models/user');
 
 module.exports.getUsers = (req, res) => {
@@ -9,7 +8,7 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .then(user = res.send({ data: user }))
+    .then(user => res.send({ data: user }))
     .catch(() => res.status(500).send({ message: 'Произошла ошибка при получении данных конкретного пользователя по id' }))
 };
 

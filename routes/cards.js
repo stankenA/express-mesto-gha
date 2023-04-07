@@ -1,3 +1,3 @@
-const cardsRouter = require('express').Router();
+// const cardsRouter = require('express').Router();
 
-module.exports = cardsRouter;
+// module.exports = cardsRouter;
