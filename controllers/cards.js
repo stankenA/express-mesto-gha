@@ -11,13 +11,27 @@ const createCard = (req, res) => {
 
   Card.create({ name, link, owner: req.user._id })
     .then(newCard => res.send({ data: newCard }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка при создании новой карточки' }))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Некорректно переданы данные новой карточки' });
+        return;
+      }
+
+      res.status(500).send({ message: 'Произошла ошибка при создании новой карточки' })
+    })
 };
 
 const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then(card => res.send({ data: card }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка при удалении карточки' }))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Ошибка удаления. Карточка с таким id не найдена' })
+        return;
+      }
+
+      res.status(500).send({ message: 'Произошла ошибка при удалении карточки' })
+    })
 };
 
 const likeCard = (req, res) => {
@@ -26,7 +40,14 @@ const likeCard = (req, res) => {
     { new: true },
   )
     .then(card => res.send({ data: card }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка при удалении карточки' }))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Ошибка лайка. Карточка с таким id не найдена' })
+        return;
+      }
+
+      res.status(500).send({ message: 'Произошла ошибка при лайке карточки' })
+    })
 };
 
 const unlikeCard = (req, res) => {
@@ -35,7 +56,14 @@ const unlikeCard = (req, res) => {
     { new: true },
   )
     .then(card => res.send({ data: card }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка при удалении карточки' }))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Ошибка лайка. Карточка с таким id не найдена' })
+        return;
+      }
+
+      res.status(500).send({ message: 'Произошла ошибка при лайке карточки' })
+    })
 };
 
 module.exports = {
