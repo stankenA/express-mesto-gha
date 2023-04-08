@@ -2,13 +2,25 @@ const User = require('../models/user');
 
 const getUsers = (req, res) => {
   User.find({})
-    .then(users => res.send({ data: users }))
+    .then(users => res.send(users.map((user) => {
+      return {
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        _id: user._id
+      }
+    })))
     .catch(() => res.status(500).send({ message: 'Произошла ошибка при получении данных пользователей' }))
 };
 
 const getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .then(user => res.send({ data: user }))
+    .then(user => res.send({
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      _id: user._id
+    }))
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(404).send({ message: 'Пользователь с таким id не найден' });
@@ -23,7 +35,12 @@ const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .then(newUser => res.send({ data: newUser }))
+    .then(newUser => res.send({
+      name: newUser.name,
+      about: newUser.about,
+      avatar: newUser.avatar,
+      _id: newUser._id
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Некорректно переданы данные нового пользователя' });
@@ -44,7 +61,11 @@ const updateUser = (req, res) => {
       runValidators: true
     }
   )
-    .then(updatedUser => res.send({ data: updatedUser }))
+    .then(updatedUser => res.send({
+      name: updatedUser.name,
+      about: updatedUser.about,
+      _id: updatedUser._id
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Некорректно переданы данные пользователя' });
@@ -70,7 +91,10 @@ const updateAvatar = (req, res) => {
       runValidators: true
     }
   )
-    .then(updatedAvatar => res.send({ data: updatedAvatar }))
+    .then(updatedAvatar => res.send({
+      avatar: updatedAvatar.avatar,
+      _id: updatedAvatar._id
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Некорректно переданы данные обновленного аватара' });
