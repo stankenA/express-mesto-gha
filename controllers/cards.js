@@ -1,5 +1,9 @@
 const Card = require('../models/card');
 
+const ERROR_404 = 404;
+const ERROR_400 = 400;
+const ERROR_500 = 500;
+
 const getCards = (req, res) => {
   Card.find({})
     .then(cards => res.send(cards.map((card) => {
@@ -12,7 +16,7 @@ const getCards = (req, res) => {
         createdAt: card.createdAt
       }
     })))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка при получении данных о карточках' }))
+    .catch(() => res.status(ERROR_500).send({ message: 'Произошла ошибка при получении данных о карточках' }))
 };
 
 const createCard = (req, res) => {
@@ -29,11 +33,11 @@ const createCard = (req, res) => {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Некорректно переданы данные новой карточки' });
+        res.status(ERROR_400).send({ message: 'Некорректно переданы данные новой карточки' });
         return;
       }
 
-      res.status(500).send({ message: 'Произошла ошибка при создании новой карточки' })
+      res.status(ERROR_500).send({ message: 'Произошла ошибка при создании новой карточки' })
     })
 };
 
@@ -49,16 +53,16 @@ const deleteCard = (req, res) => {
     }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Ошибка удаления. Некорректно введён id' })
+        res.status(ERROR_400).send({ message: 'Ошибка удаления. Некорректно введён id' })
         return;
       }
 
       if (err.name === 'TypeError') {
-        res.status(404).send({ message: 'Ошибка удаления. Карточка с таким id не найдена' })
+        res.status(ERROR_404).send({ message: 'Ошибка удаления. Карточка с таким id не найдена' })
         return;
       }
 
-      res.status(500).send({ message: 'Произошла ошибка при удалении карточки' })
+      res.status(ERROR_500).send({ message: 'Произошла ошибка при удалении карточки' })
     })
 };
 
@@ -77,16 +81,16 @@ const likeCard = (req, res) => {
     }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Ошибка постановки лайка. Некорректно введён id' })
+        res.status(ERROR_400).send({ message: 'Ошибка постановки лайка. Некорректно введён id' })
         return;
       }
 
       if (err.name === 'TypeError') {
-        res.status(404).send({ message: 'Ошибка постановки лайка. Карточка с таким id не найдена' })
+        res.status(ERROR_404).send({ message: 'Ошибка постановки лайка. Карточка с таким id не найдена' })
         return;
       }
 
-      res.status(500).send({ message: 'Произошла ошибка при постановке лайка карточки', err: `${err}` })
+      res.status(ERROR_500).send({ message: 'Произошла ошибка при постановке лайка карточки', err: `${err}` })
     })
 };
 
@@ -105,16 +109,16 @@ const unlikeCard = (req, res) => {
     }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Ошибка снятия лайка. Некорректно введён id' })
+        res.status(ERROR_400).send({ message: 'Ошибка снятия лайка. Некорректно введён id' })
         return;
       }
 
       if (err.name === 'TypeError') {
-        res.status(404).send({ message: 'Ошибка снятия лайка. Карточка с таким id не найдена' })
+        res.status(ERROR_404).send({ message: 'Ошибка снятия лайка. Карточка с таким id не найдена' })
         return;
       }
 
-      res.status(500).send({ message: 'Произошла ошибка при снятии лайка карточки' })
+      res.status(ERROR_500).send({ message: 'Произошла ошибка при снятии лайка карточки' })
     })
 };
 

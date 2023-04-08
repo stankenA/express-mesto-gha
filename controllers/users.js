@@ -1,5 +1,9 @@
 const User = require('../models/user');
 
+const ERROR_404 = 404;
+const ERROR_400 = 400;
+const ERROR_500 = 500;
+
 const getUsers = (req, res) => {
   User.find({})
     .then(users => res.send(users.map((user) => {
@@ -10,7 +14,7 @@ const getUsers = (req, res) => {
         _id: user._id
       }
     })))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка при получении данных пользователей' }))
+    .catch(() => res.status(ERROR_500).send({ message: 'Произошла ошибка при получении данных пользователей' }))
 };
 
 const getUserById = (req, res) => {
@@ -23,16 +27,16 @@ const getUserById = (req, res) => {
     }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Введён некорректный id' });
+        res.status(ERROR_400).send({ message: 'Введён некорректный id' });
         return;
       }
 
       if (err.name === 'TypeError') {
-        res.status(404).send({ message: 'Пользователь с таким id не найден' });
+        res.status(ERROR_404).send({ message: 'Пользователь с таким id не найден' });
         return;
       }
 
-      res.status(500).send({ message: 'Произошла ошибка при получении пользователя по id', err: `${err}` })
+      res.status(ERROR_500).send({ message: 'Произошла ошибка при получении пользователя по id', err: `${err}` })
     })
 };
 
@@ -48,11 +52,11 @@ const createUser = (req, res) => {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Некорректно переданы данные нового пользователя' });
+        res.status(ERROR_400).send({ message: 'Некорректно переданы данные нового пользователя' });
         return;
       }
 
-      res.status(500).send({ message: 'Произошла ошибка при создании нового пользователя' })
+      res.status(ERROR_500).send({ message: 'Произошла ошибка при создании нового пользователя' })
     })
 };
 
@@ -73,16 +77,16 @@ const updateUser = (req, res) => {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Некорректно переданы данные пользователя' });
+        res.status(ERROR_400).send({ message: 'Некорректно переданы данные пользователя' });
         return;
       }
 
       if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Пользователь с таким id не найден' });
+        res.status(ERROR_404).send({ message: 'Пользователь с таким id не найден' });
         return;
       }
 
-      res.status(500).send({ message: 'Произошла ошибка при обновлении данных пользователя' })
+      res.status(ERROR_500).send({ message: 'Произошла ошибка при обновлении данных пользователя' })
     })
 };
 
@@ -102,16 +106,16 @@ const updateAvatar = (req, res) => {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Некорректно переданы данные обновленного аватара' });
+        res.status(ERROR_400).send({ message: 'Некорректно переданы данные обновленного аватара' });
         return;
       }
 
       if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Пользователь с таким id не найден' });
+        res.status(ERROR_404).send({ message: 'Пользователь с таким id не найден' });
         return;
       }
 
-      res.status(500).send({ message: 'Произошла ошибка при обновлении аватара пользователя' })
+      res.status(ERROR_500).send({ message: 'Произошла ошибка при обновлении аватара пользователя' })
     })
 };
 
