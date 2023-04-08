@@ -23,11 +23,16 @@ const getUserById = (req, res) => {
     }))
     .catch((err) => {
       if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Введён некорректный id' });
+        return;
+      }
+
+      if (err.name === 'TypeError') {
         res.status(404).send({ message: 'Пользователь с таким id не найден' });
         return;
       }
 
-      res.status(500).send({ message: 'Произошла ошибка при получении пользователя по id' })
+      res.status(500).send({ message: 'Произошла ошибка при получении пользователя по id', err: `${err}` })
     })
 };
 

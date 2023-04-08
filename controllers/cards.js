@@ -49,6 +49,11 @@ const deleteCard = (req, res) => {
     }))
     .catch((err) => {
       if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Ошибка удаления. Некорректно введён id' })
+        return;
+      }
+
+      if (err.name === 'TypeError') {
         res.status(404).send({ message: 'Ошибка удаления. Карточка с таким id не найдена' })
         return;
       }
@@ -72,6 +77,11 @@ const likeCard = (req, res) => {
     }))
     .catch((err) => {
       if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Ошибка постановки лайка. Некорректно введён id' })
+        return;
+      }
+
+      if (err.name === 'TypeError') {
         res.status(404).send({ message: 'Ошибка постановки лайка. Карточка с таким id не найдена' })
         return;
       }
@@ -95,6 +105,11 @@ const unlikeCard = (req, res) => {
     }))
     .catch((err) => {
       if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Ошибка снятия лайка. Некорректно введён id' })
+        return;
+      }
+
+      if (err.name === 'TypeError') {
         res.status(404).send({ message: 'Ошибка снятия лайка. Карточка с таким id не найдена' })
         return;
       }
