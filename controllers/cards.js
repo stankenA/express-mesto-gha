@@ -14,14 +14,7 @@ const createCard = (req, res) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user._id })
-    .then((newCard) => res.send({
-      createdAt: newCard.createdAt,
-      likes: newCard.likes,
-      link: newCard.link,
-      name: newCard.name,
-      owner: newCard.owner,
-      _id: newCard._id,
-    }))
+    .then((newCard) => res.send(newCard))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(ERROR_400).send({ message: 'Некорректно переданы данные новой карточки' });
@@ -34,22 +27,17 @@ const createCard = (req, res) => {
 
 const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .then((card) => res.send({
-      createdAt: card.createdAt,
-      likes: card.likes,
-      link: card.link,
-      name: card.name,
-      owner: card.owner,
-      _id: card._id,
-    }))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(ERROR_400).send({ message: 'Ошибка удаления. Некорректно введён id' });
+    .then((card) => {
+      if (!card) {
+        res.status(ERROR_404).send({ message: 'Ошибка удаления. Карточка с таким id не найдена' });
         return;
       }
 
-      if (err.name === 'TypeError') {
-        res.status(ERROR_404).send({ message: 'Ошибка удаления. Карточка с таким id не найдена' });
+      res.send(card);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(ERROR_400).send({ message: 'Ошибка удаления. Некорректно введён id' });
         return;
       }
 
@@ -63,22 +51,17 @@ const likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
-    .then((card) => res.send({
-      createdAt: card.createdAt,
-      likes: card.likes,
-      link: card.link,
-      name: card.name,
-      owner: card.owner,
-      _id: card._id,
-    }))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(ERROR_400).send({ message: 'Ошибка постановки лайка. Некорректно введён id' });
+    .then((card) => {
+      if (!card) {
+        res.status(ERROR_404).send({ message: 'Ошибка постановки лайка. Карточка с таким id не найдена' });
         return;
       }
 
-      if (err.name === 'TypeError') {
-        res.status(ERROR_404).send({ message: 'Ошибка постановки лайка. Карточка с таким id не найдена' });
+      res.send(card);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(ERROR_400).send({ message: 'Ошибка постановки лайка. Некорректно введён id' });
         return;
       }
 
@@ -92,22 +75,17 @@ const unlikeCard = (req, res) => {
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
-    .then((card) => res.send({
-      createdAt: card.createdAt,
-      likes: card.likes,
-      link: card.link,
-      name: card.name,
-      owner: card.owner,
-      _id: card._id,
-    }))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(ERROR_400).send({ message: 'Ошибка снятия лайка. Некорректно введён id' });
+    .then((card) => {
+      if (!card) {
+        res.status(ERROR_404).send({ message: 'Ошибка снятия лайка. Карточка с таким id не найдена' });
         return;
       }
 
-      if (err.name === 'TypeError') {
-        res.status(ERROR_404).send({ message: 'Ошибка снятия лайка. Карточка с таким id не найдена' });
+      res.send(card);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(ERROR_400).send({ message: 'Ошибка снятия лайка. Некорректно введён id' });
         return;
       }
 
