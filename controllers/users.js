@@ -8,7 +8,7 @@ const {
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.send(users.map((user) => user)))
+    .then((users) => res.send(users))
     .catch(() => res.status(ERROR_500).send({ message: 'Произошла ошибка при получении данных пользователей' }));
 };
 
@@ -61,6 +61,7 @@ const updateUser = (req, res) => {
     .then((updatedUser) => {
       if (!updatedUser) {
         res.status(ERROR_404).send({ message: 'Пользователь с таким id не найден' });
+        return;
       }
 
       res.send(updatedUser);
@@ -94,6 +95,7 @@ const updateAvatar = (req, res) => {
     .then((updatedAvatar) => {
       if (!updatedAvatar) {
         res.status(ERROR_404).send({ message: 'Пользователь с таким id не найден' });
+        return;
       }
 
       res.send(updatedAvatar);
