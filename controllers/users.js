@@ -4,6 +4,7 @@ const User = require('../models/user');
 const {
   ERROR_400,
   ERROR_404,
+  ERROR_401,
   ERROR_500,
 } = require('../utils/constants');
 
@@ -129,10 +130,26 @@ const updateAvatar = (req, res) => {
     });
 };
 
+const login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      // аутентификация успешна! пользователь в переменной user
+    })
+    .catch((err) => {
+      // ошибка аутентификации
+      res
+        .status(401)
+        .send({ message: err.message });
+    });
+};
+
 module.exports = {
   getUsers,
   getUserById,
   createUser,
   updateUser,
   updateAvatar,
+  login,
 };
