@@ -7,6 +7,7 @@ const {
   ERROR_404,
   ERROR_401,
   ERROR_500,
+  ERROR_409,
 } = require('../utils/constants');
 
 const getUsers = (req, res) => {
@@ -62,6 +63,11 @@ const createUser = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(ERROR_400).send({ message: 'Некорректно переданы данные нового пользователя' });
+        return;
+      }
+
+      if (err.code === 11000) {
+        res.status(ERROR_409).send({ message: 'Пользователь с таким e-mail уже существует' });
         return;
       }
 
