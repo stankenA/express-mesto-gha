@@ -3,6 +3,7 @@ const {
   ERROR_400,
   ERROR_404,
   ERROR_500,
+  ERROR_401,
 } = require('../utils/constants');
 
 const getCards = (req, res) => {
@@ -27,22 +28,33 @@ const createCard = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  const { cardId } = req.params;
+  const userId = req.user._id;
+
+  Card.findById(cardId)
     .then((card) => {
       if (!card) {
         res.status(ERROR_404).send({ message: 'Ошибка удаления. Карточка с таким id не найдена' });
         return;
       }
 
-      res.send(card);
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(ERROR_400).send({ message: 'Ошибка удаления. Некорректно введён id' });
+      if (card.owner.toString() !== userId) {
+        res.status(ERROR_401).send({ message: 'Нельзя удалять чужие карточки' });
         return;
       }
 
-      res.status(ERROR_500).send({ message: 'Произошла ошибка при удалении карточки' });
+      Card.findByIdAndRemove(cardId)
+        .then((deletedCard) => {
+          res.send(deletedCard);
+        })
+        .catch((err) => {
+          if (err.name === 'CastError') {
+            res.status(ERROR_400).send({ message: 'Ошибка удаления. Некорректно введён id' });
+            return;
+          }
+
+          res.status(ERROR_500).send({ message: 'Произошла ошибка при удалении карточки' });
+        });
     });
 };
 
