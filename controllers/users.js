@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const {
@@ -135,13 +136,12 @@ const login = (req, res) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      // аутентификация успешна! пользователь в переменной user
+      const token = jwt.sign({ _id: user._id }, 'some-secret', { expiresIn: '7d' });
+
+      res.send({ jwt: token });
     })
     .catch((err) => {
-      // ошибка аутентификации
-      res
-        .status(401)
-        .send({ message: err.message });
+      res.status(ERROR_401).send({ message: err.message });
     });
 };
 
