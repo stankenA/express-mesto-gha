@@ -15,6 +15,12 @@ const getUsers = (req, res) => {
     .catch(() => res.status(ERROR_500).send({ message: 'Произошла ошибка при получении данных пользователей' }));
 };
 
+const getCurrentUser = (req, res) => {
+  User.findById(req.user._id)
+    .then((user) => res.send(user))
+    .catch(() => res.status(ERROR_500).send({ message: 'Произошла ошибка при получении данных текущего пользователя' }));
+};
+
 const getUserById = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
@@ -147,6 +153,7 @@ const login = (req, res) => {
 
 module.exports = {
   getUsers,
+  getCurrentUser,
   getUserById,
   createUser,
   updateUser,
