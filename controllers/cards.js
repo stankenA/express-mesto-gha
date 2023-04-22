@@ -2,12 +2,6 @@ const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
 const UnauthorizedError = require('../errors/UnauthorizedError');
 const Card = require('../models/card');
-const {
-  ERROR_400,
-  ERROR_404,
-  ERROR_500,
-  ERROR_401,
-} = require('../utils/constants');
 
 const getCards = (req, res, next) => {
   Card.find({})
