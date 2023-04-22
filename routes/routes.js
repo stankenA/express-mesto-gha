@@ -18,8 +18,8 @@ router.post('/signin', celebrate({
 }), login);
 router.post('/signup', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(30),
-    about: Joi.string().required().min(2).max(30),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
     avatar: Joi.string().regex(new RegExp(regexForURL)),
     email: Joi.string().email().required(),
     password: Joi.string().min(8).required(),
