@@ -7,13 +7,13 @@ const {
   updateUser,
   updateAvatar,
 } = require('../controllers/users');
-const { regexForURL } = require('../utils/constants');
+const { REGEXP_URL } = require('../utils/constants');
 
 usersRouter.get('/', getUsers);
 usersRouter.get('/me', getCurrentUser);
 usersRouter.get('/:userId', celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().alphanum().length(24),
+    userId: Joi.string().hex().length(24).required(),
   }),
 }), getUserById);
 
@@ -26,7 +26,7 @@ usersRouter.patch('/me', celebrate({
 
 usersRouter.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().regex(new RegExp(regexForURL)),
+    avatar: Joi.string().required().regex(new RegExp(REGEXP_URL)),
   }),
 }), updateAvatar);
 

@@ -8,7 +8,7 @@ const {
   createUser,
 } = require('../controllers/users');
 const NotFoundError = require('../errors/NotFoundError');
-const { regexForURL } = require('../utils/constants');
+const { REGEXP_URL } = require('../utils/constants');
 
 router.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -20,7 +20,7 @@ router.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().regex(new RegExp(regexForURL)),
+    avatar: Joi.string().regex(new RegExp(REGEXP_URL)),
     email: Joi.string().email().required(),
     password: Joi.string().min(8).required(),
   }),
