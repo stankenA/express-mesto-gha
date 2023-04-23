@@ -4,7 +4,6 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
 const ConflictError = require('../errors/ConflictError');
-const UnauthorizedError = require('../errors/UnauthorizedError');
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -30,9 +29,9 @@ const getUserById = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Введён некорректный id'));
+      } else {
+        next(err);
       }
-
-      next(err);
     });
 };
 
@@ -53,22 +52,20 @@ const createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((newUser) => res.send({
-      name: newUser.name,
-      about: newUser.about,
-      avatar: newUser.avatar,
-      email: newUser.email,
-    }))
+    .then((user) => {
+      const newUser = user.toObject();
+      delete newUser.password;
+
+      res.send(newUser);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Некорректно переданы данные нового пользователя'));
-      }
-
-      if (err.code === 11000) {
+      } else if (err.code === 11000) {
         next(new ConflictError('Пользователь с таким e-mail уже существует'));
+      } else {
+        next(err);
       }
-
-      next(err);
     });
 };
 
@@ -93,13 +90,9 @@ const updateUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Некорректно переданы данные пользователя'));
+      } else {
+        next(err);
       }
-
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Введён некорректный id'));
-      }
-
-      next(err);
     });
 };
 
@@ -124,13 +117,9 @@ const updateAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Некорректно переданы данные обновленного аватара'));
+      } else {
+        next(err);
       }
-
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Введён некорректный id'));
-      }
-
-      next(err);
     });
 };
 
@@ -143,9 +132,7 @@ const login = (req, res, next) => {
 
       res.send({ jwt: token });
     })
-    .catch((err) => {
-      next(new UnauthorizedError(err.message));
-    });
+    .catch(next);
 };
 
 module.exports = {

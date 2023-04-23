@@ -13,13 +13,13 @@ const createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user._id })
-    .then((newCard) => res.send(newCard))
+    .then((newCard) => res.status(201).send(newCard))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Некорректно переданы данные новой карточки'));
+      } else {
+        next(err);
       }
-
-      next(err);
     });
 };
 
@@ -37,19 +37,19 @@ const deleteCard = (req, res, next) => {
         throw new ForbiddenError('Нельзя удалять чужие карточки');
       }
 
-      Card.findByIdAndRemove(cardId)
-        .then((deletedCard) => {
-          res.send(deletedCard);
+      Card.deleteOne()
+        .then(() => {
+          res.send({ message: 'Карточка успешно удалена' });
         })
-        .catch((err) => {
-          if (err.name === 'CastError') {
-            next(new BadRequestError('Ошибка удаления. Некорректно введён id'));
-          }
-
-          next(err);
-        });
+        .catch(next);
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Ошибка удаления. Некорректно введён id'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const likeCard = (req, res, next) => {
@@ -68,9 +68,9 @@ const likeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Ошибка постановки лайка. Некорректно введён id'));
+      } else {
+        next(err);
       }
-
-      next(err);
     });
 };
 
@@ -90,9 +90,9 @@ const unlikeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Ошибка снятия лайка. Некорректно введён id'));
+      } else {
+        next(err);
       }
-
-      next(err);
     });
 };
 
