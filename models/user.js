@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
-const BadRequestError = require('../errors/BadRequestError');
 const UnauthorizedError = require('../errors/UnauthorizedError');
 
 const userSchema = new mongoose.Schema({
@@ -53,7 +52,7 @@ userSchema.statics.findUserByCredentials = function (email, password) {
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw new BadRequestError('Неправильные почта или пароль');
+            throw new UnauthorizedError('Неправильные почта или пароль');
           }
 
           return user;
