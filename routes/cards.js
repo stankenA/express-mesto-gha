@@ -13,11 +13,8 @@ const {
 
 cardsRouter.get('/', getCards);
 cardsRouter.post('/', validationForCardBody, createCard);
-
 cardsRouter.delete('/:cardId', validationForCardParams, deleteCard);
-
 cardsRouter.put('/:cardId/likes', validationForCardParams, likeCard);
-
 cardsRouter.delete('/:cardId/likes', validationForCardParams, unlikeCard);
 
 module.exports = cardsRouter;
