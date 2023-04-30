@@ -11,7 +11,7 @@ const app = express();
 app.use(express.json()); // для сборки JSON-формата
 app.use(express.urlencoded({ extended: true })); // для приёма веб-страниц внутри POST-запроса
 
-mongoose.connect('mongodb://localhost:27017/mestodb');
+mongoose.connect('mongodb://158.160.50.5:27017/mestodb');
 
 app.use(requestLogger);
 
