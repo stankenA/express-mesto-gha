@@ -11,7 +11,15 @@ const app = express();
 app.use(express.json()); // для сборки JSON-формата
 app.use(express.urlencoded({ extended: true })); // для приёма веб-страниц внутри POST-запроса
 
-mongoose.connect('mongodb://localhost:27017/mestodb');
+mongoose.connect('mongodb://localhost:27017/mestodb', {
+  family: 4,
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000,
+  autoIndex: false,
+  maxPoolSize: 10,
+  socketTimeoutMS: 45000,
+});
 
 app.use(requestLogger);
 
