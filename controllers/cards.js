@@ -6,7 +6,7 @@ const Card = require('../models/card');
 const getCards = (req, res, next) => {
   Card.find({})
     .populate(['owner', 'likes'])
-    .then((cards) => res.send(cards))
+    .then((cards) => res.send(cards.reverse()))
     .catch(next);
 };
 
@@ -14,7 +14,12 @@ const createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user._id })
-    .then((newCard) => res.status(201).send(newCard))
+    .then((newCard) => {
+      Card.findOne(newCard)
+        .populate(['owner', 'likes'])
+        .then((card) => res.status(201).send(card))
+        .catch(next);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Некорректно переданы данные новой карточки'));
@@ -38,7 +43,7 @@ const deleteCard = (req, res, next) => {
         throw new ForbiddenError('Нельзя удалять чужие карточки');
       }
 
-      Card.deleteOne()
+      card.deleteOne()
         .then(() => {
           res.send({ message: 'Карточка успешно удалена' });
         })
@@ -59,6 +64,7 @@ const likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
+    .populate(['owner', 'likes'])
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Ошибка постановки лайка. Карточка с таким id не найдена');
@@ -81,6 +87,7 @@ const unlikeCard = (req, res, next) => {
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
+    .populate(['owner', 'likes'])
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Ошибка снятия лайка. Карточка с таким id не найдена');
